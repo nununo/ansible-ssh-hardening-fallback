@@ -1,5 +1,7 @@
 # ssh-hardening-fallback (Ansible role)
 
+(Still in alpha stage. Not ready for production!)
+
 ## Description
 
 Idempotent wrapper to dev-sec.ssh-hardening with automatic fallback to default port 22.
