@@ -1,0 +1,30 @@
+---
+- name: Initialize ssh_server_ports with inventory port.
+  set_fact:
+    ssh_server_ports: "[{{ ansible_port }}]"
+
+- name: Check if server still using the default SSH port.
+  wait_for:
+    port: "22"
+    state: "started"
+    host: "{{ inventory_hostname }}"
+    connect_timeout: 5
+    timeout: 10
+  become: false
+  delegate_to: "localhost"
+  ignore_errors: true
+  register: ssh_hardening_default_port_check
+
+- name: Fallback ansible_port to default 22 (to be restored at the end).
+  block:
+    - debug:
+        msg: "Falling back from port {{ ansible_port }} to port 22."
+    - name: Temporarily set ansible_port = 22.
+      set_fact:
+        ansible_port: 22
+    - name: Flag that we're falling back to port 22.
+      set_fact:
+        ssh_hardening_fallback: true
+  when:
+    - ssh_hardening_default_port_check is defined
+    - not ssh_hardening_default_port_check.failed
