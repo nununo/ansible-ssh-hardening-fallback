@@ -8,9 +8,9 @@ Idempotent wrapper to dev-sec.ssh-hardening with automatic fallback to default p
 
 ## TODO
 
-[] Make fallback code more resilient
-[] Proper tests (Molecule?)
-[] Submit to Galaxy
+- [ ] Make fallback code more resilient
+- [ ] Proper tests (Molecule?)
+- [ ] Submit to Galaxy
 
 ## Requirements
 
