@@ -13,4 +13,4 @@
 
 - name: Revert port from 22 back to inventory port.
   include_tasks: after.yml
-  when: ssh_hardening_fallback is defined
+  when: ssh_hardening_fallback_use22 is defined

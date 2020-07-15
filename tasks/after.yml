@@ -1,5 +1,5 @@
 ---
-- name: Force handlers to restart sshd. From now on it responds to inventory port.
+- name: Force handlers to restart sshd. After this, it responds to inventory port.
   meta: flush_handlers
 
 - name: Restore ansible_port back to inventory port.
@@ -7,4 +7,4 @@
     ansible_port: "{{ ssh_server_ports[0] }}"
 
 - debug:
-    msg: "Restoring port from 22 back to {{ ssh_server_ports[0] }}."
+    msg: "ansible_port restored from 22 back to {{ ssh_server_ports[0] }}."
