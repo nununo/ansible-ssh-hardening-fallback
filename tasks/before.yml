@@ -1,9 +1,32 @@
 ---
-- name: Initialize ssh_server_ports with inventory port.
+- name: Initialize ssh_server_ports with inventory port (early, in case it falls back to 22).
   set_fact:
     ssh_server_ports: "[{{ ansible_port }}]"
 
-- name: Check if server still using the default SSH port.
+- name: Check if we're using the inventory-provided SSH port.
+  wait_for:
+    port: "{{ ansible_port }}"
+    state: "started"
+    host: "{{ inventory_hostname }}"
+    connect_timeout: 5
+    timeout: 10
+  become: false
+  delegate_to: "localhost"
+  ignore_errors: "yes"
+  register: ssh_hardening_fallback_inventory_port_check
+
+- name: Inventory port reachable.
+  block:
+    - debug:
+        msg: "Inventory port reachable. No need to fallback"
+    - name: Flag that host is reachable
+      set_fact:
+        ssh_hardening_fallback_reachable: true
+  when:
+    - ssh_hardening_fallback_inventory_port_check is defined
+    - not ssh_hardening_fallback_inventory_port_check.failed
+
+- name: Then check if server still uses the default SSH port.
   wait_for:
     port: "22"
     state: "started"
@@ -13,7 +36,8 @@
   become: false
   delegate_to: "localhost"
   ignore_errors: true
-  register: ssh_hardening_default_port_check
+  register: ssh_hardening_fallback_default_port_check
+  when: ssh_hardening_fallback_reachable is undefined
 
 - name: Fallback ansible_port to default 22 (to be restored at the end).
   block:
@@ -22,9 +46,18 @@
     - name: Temporarily set ansible_port = 22.
       set_fact:
         ansible_port: 22
+    - name: Flag that host is reachable
+      set_fact:
+        ssh_hardening_fallback_reachable: true
     - name: Flag that we're falling back to port 22.
       set_fact:
-        ssh_hardening_fallback: true
+        ssh_hardening_fallback_use22: true
   when:
-    - ssh_hardening_default_port_check is defined
-    - not ssh_hardening_default_port_check.failed
+    - ssh_hardening_fallback_reachable is undefined
+    - ssh_hardening_fallback_default_port_check is defined
+    - not ssh_hardening_fallback_default_port_check.failed
+
+- name: If the SSH port is neither the default or the configured, give up.
+  fail:
+    msg: "The SSH port is neither 22 nor {{ ansible_port }}."
+  when: ssh_hardening_fallback_reachable is undefined
