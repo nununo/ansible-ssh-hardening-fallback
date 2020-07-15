@@ -4,7 +4,7 @@
 
 ## Description
 
-Idempotent wrapper to dev-sec.ssh-hardening with automatic fallback to default port 22.
+Idempotent wrapper to role [dev-sec.ssh-hardening](https://github.com/dev-sec/ansible-ssh-hardening) with automatic fallback to default port 22.
 
 ## TODO
 
