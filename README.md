@@ -46,5 +46,5 @@ limitations under the License.
 
 ## Author Information
 
-* Author: Nuno Godinho
-* Inspired by [this post](https://dmsimard.com/2016/03/15/changing-the-ssh-port-with-ansible/) by: David Moreau Simard
+- Author: Nuno Godinho
+- Inspired by [this post](https://dmsimard.com/2016/03/15/changing-the-ssh-port-with-ansible/) by: David Moreau Simard

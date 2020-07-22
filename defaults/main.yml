@@ -1,1 +1,3 @@
----
+# if undefined ansible defaults to 22 but we'll always define it to 22
+# so that the tasks logic can rely on it existing.
+ansible_port: 22
