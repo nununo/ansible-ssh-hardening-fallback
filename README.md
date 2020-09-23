@@ -28,7 +28,7 @@ It calls role `dev-sec.ssh-hardening`. When using this role, variable `ssh_serve
 
     - hosts: servers
       roles:
-         - { role: nununo.ssh-hardening-fallback }
+      - role: nununo.ssh-hardening-fallback
 
 ## License
 
